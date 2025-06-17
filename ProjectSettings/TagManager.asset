@@ -2,8 +2,24 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
-  tags: []
+  serializedVersion: 3
+  tags:
+  - QDSUITooltip
+  - QDSUIToggleButton
+  - QDSUIIcon
+  - QDSUITextSecondaryColor
+  - QDSUIToggleBorderlessButton
+  - QDSUIBackplateGradient
+  - QDSUISharedThemeColor
+  - QDSUITextInputField
+  - QDSUISection
+  - QDSUISecondaryButton
+  - QDSUIAccentColor
+  - QDSUIBorderlessButton
+  - QDSUIDestructiveButton
+  - QDSUIPrimaryButton
+  - QDSUITextInvertedColor
+  - QDSUITextSecondaryInvertedColor
   layers:
   - Default
   - TransparentFX
@@ -11,7 +27,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Measurable
   - 
   - 
   - 
@@ -50,27 +66,3 @@ TagManager:
   - Light Layer 5
   - Light Layer 6
   - Light Layer 7
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
