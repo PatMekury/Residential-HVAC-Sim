@@ -2167,6 +2167,7 @@ MonoBehaviour:
   - {fileID: 842635874}
   - {fileID: 233101300}
   _handler: {fileID: 1955350040}
+  _handlers: []
 --- !u!1 &143778988
 GameObject:
   m_ObjectHideFlags: 0
@@ -2485,7 +2486,6 @@ MonoBehaviour:
   _whenSwipeDown:
     m_PersistentCalls:
       m_Calls: []
-  _hand: {fileID: 190557482}
   _whenSwipeLeft:
     m_PersistentCalls:
       m_Calls:
@@ -4582,7 +4582,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  _hand: {fileID: 322717357}
   _whenSwipeLeft:
     m_PersistentCalls:
       m_Calls: []
@@ -6834,6 +6833,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _areaName: Non Walkable
+  _agentIndex: 0
   _snapDistance: 0
   _voxelSize: 0.01
   _calculateNormals: 0
@@ -7454,7 +7454,6 @@ MonoBehaviour:
   _whenSwipeDown:
     m_PersistentCalls:
       m_Calls: []
-  _hand: {fileID: 516515313}
   _whenSwipeLeft:
     m_PersistentCalls:
       m_Calls:
@@ -14941,10 +14940,10 @@ MonoBehaviour:
   reticle: {fileID: 652901175}
   reticleHighlightMaterial: {fileID: 2100000, guid: 074f7ca1cb31a2541a295200f16705d9, type: 2}
   reticleDefaultMaterial: {fileID: 2100000, guid: 891cb734b1022d246a31907346236591, type: 2}
-  collisionLayerMask:
+  visualCollisionLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  maxDistance: 100
+  maxVisualDistance: 100
 --- !u!1 &1039519327
 GameObject:
   m_ObjectHideFlags: 0
@@ -15460,6 +15459,7 @@ MonoBehaviour:
   - {fileID: 82053611}
   - {fileID: 2008630011}
   _handler: {fileID: 1955350040}
+  _handlers: []
 --- !u!1 &1071087354
 GameObject:
   m_ObjectHideFlags: 0
@@ -19986,7 +19986,6 @@ MonoBehaviour:
   _whenSwipeDown:
     m_PersistentCalls:
       m_Calls: []
-  _hand: {fileID: 1586500219}
   _whenSwipeLeft:
     m_PersistentCalls:
       m_Calls: []
@@ -22065,7 +22064,6 @@ MonoBehaviour:
   _whenSwipeDown:
     m_PersistentCalls:
       m_Calls: []
-  _hand: {fileID: 1706228606}
   _whenSwipeLeft:
     m_PersistentCalls:
       m_Calls: []
@@ -22861,6 +22859,7 @@ MonoBehaviour:
   - {fileID: 190557481}
   - {fileID: 1965041990}
   _handler: {fileID: 1955350040}
+  _handlers: []
 --- !u!114 &1586500222
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23334,7 +23333,6 @@ MonoBehaviour:
   _whenSwipeDown:
     m_PersistentCalls:
       m_Calls: []
-  _hand: {fileID: 393457730}
   _whenSwipeLeft:
     m_PersistentCalls:
       m_Calls: []
@@ -24364,10 +24362,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e933e81d3c20c74ea6fdc708a67e3a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useRecommendedMSAALevel: 1
   _monoscopic: 0
   _sharpenType: 0
-  _enableDynamicResolution: 1
+  _enableDynamicResolution: 0
   minDynamicResolutionScale: 1
   maxDynamicResolutionScale: 1
   quest2MinDynamicResolutionScale: 0.7
@@ -24419,6 +24416,7 @@ MonoBehaviour:
   requestEyeTrackingPermissionOnStartup: 0
   requestScenePermissionOnStartup: 0
   requestRecordAudioPermissionOnStartup: 0
+  requestPassthroughCameraAccessPermissionOnStartup: 0
   _localDimming: 1
   _trackingOriginType: 1
   usePositionTracking: 1
@@ -25212,6 +25210,7 @@ MonoBehaviour:
   - {fileID: 516515312}
   - {fileID: 322717359}
   _handler: {fileID: 1955350040}
+  _handlers: []
 --- !u!114 &1706228609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27260,7 +27259,6 @@ MonoBehaviour:
   _whenSwipeDown:
     m_PersistentCalls:
       m_Calls: []
-  _hand: {fileID: 776147542}
   _whenSwipeLeft:
     m_PersistentCalls:
       m_Calls: []
@@ -28075,7 +28073,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  _hand: {fileID: 1965041988}
   _whenSwipeLeft:
     m_PersistentCalls:
       m_Calls: []
@@ -29389,6 +29386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _areaName: Walkable
+  _agentIndex: 0
   _snapDistance: 0
   _voxelSize: 0.01
   _calculateNormals: 0
@@ -30030,6 +30028,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ovrCameraRig: {fileID: 1677068867}
+  _leftHand: {fileID: 0}
+  _rightHand: {fileID: 0}
   _requireOvrHands: 1
 --- !u!114 &2094639436
 MonoBehaviour:
