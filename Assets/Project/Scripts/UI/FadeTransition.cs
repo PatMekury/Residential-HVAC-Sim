@@ -8,6 +8,7 @@ namespace ResidentialHVAC.UI
 {
     /// <summary>
     /// Handles fade to/from black or white transitions
+    /// Works with both regular cameras and VR (OVRCameraRig)
     /// </summary>
     public class FadeTransition : MonoBehaviour
     {
@@ -32,6 +33,7 @@ namespace ResidentialHVAC.UI
 
         [Header("Canvas Settings")]
         [SerializeField] private Canvas _fadeCanvas;
+        [SerializeField] private float _planeDistance = 1.0f; // Distance from camera in meters
 
         private Coroutine _currentFade;
 
@@ -52,8 +54,7 @@ namespace ResidentialHVAC.UI
 
             if (_fadeCanvas != null)
             {
-                _fadeCanvas.sortingOrder = 9999; // Always on top
-                _fadeCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                SetupCanvasForCurrentCamera();
             }
 
             // Start with transparent
@@ -65,6 +66,77 @@ namespace ResidentialHVAC.UI
                 _fadeImage.raycastTarget = false;
             }
         }
+
+        private void OnEnable()
+        {
+            // Update camera reference when scene changes
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+        {
+            // Update canvas camera reference for new scene
+            StartCoroutine(UpdateCameraNextFrame());
+        }
+
+        private IEnumerator UpdateCameraNextFrame()
+        {
+            // Wait a frame to ensure OVRCameraRig is initialized
+            yield return null;
+            SetupCanvasForCurrentCamera();
+        }
+
+        private void SetupCanvasForCurrentCamera()
+        {
+            Camera targetCamera = FindVRCamera();
+
+            if (targetCamera != null)
+            {
+                _fadeCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+                _fadeCanvas.worldCamera = targetCamera;
+                _fadeCanvas.planeDistance = _planeDistance;
+                _fadeCanvas.sortingOrder = 9999; // Always on top
+
+                Debug.Log($"[FadeTransition] Canvas attached to camera: {targetCamera.gameObject.name}");
+            }
+            else
+            {
+                Debug.LogWarning("[FadeTransition] No camera found! Falling back to Overlay mode.");
+                _fadeCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                _fadeCanvas.sortingOrder = 9999;
+            }
+        }
+
+        /// <summary>
+        /// Find the appropriate camera - prioritize OVR CenterEyeAnchor, fallback to main camera
+        /// </summary>
+        private Camera FindVRCamera()
+        {
+            GameObject centerEye = GameObject.Find("CenterEyeAnchor");
+            if (centerEye != null)
+            {
+                Camera cam = centerEye.GetComponent<Camera>();
+                if (cam != null)
+                    return cam;
+            }
+
+            // Fallback to main camera
+            if (Camera.main != null)
+                return Camera.main;
+
+            // Last resort: find any active camera
+            Camera[] cameras = FindObjectsByType<Camera>(FindObjectsSortMode.None);
+            if (cameras.Length > 0)
+                return cameras[0];
+
+            return null;
+        }
+
 
         /// <summary>
         /// Fade from transparent to black

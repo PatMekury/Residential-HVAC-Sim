@@ -14,6 +14,7 @@ namespace ResidentialHVAC.Progress
         public bool hubUnlocked = false;
         public bool trainingModeCompleted = false;
         public bool loadCalculationCompleted = false;
+        public bool heatTransferCompleted = false;
         public bool materialSelectionCompleted = false;
         public bool systemInstallationCompleted = false;
 
@@ -58,6 +59,7 @@ namespace ResidentialHVAC.Progress
             overallProgress = 0;
             hubUnlocked = false;
             trainingModeCompleted = false;
+            heatTransferCompleted = false;
             loadCalculationCompleted = false;
             materialSelectionCompleted = false;
             systemInstallationCompleted = false;

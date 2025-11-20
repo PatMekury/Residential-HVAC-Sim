@@ -191,8 +191,46 @@ namespace ResidentialHVAC.Menu
                 yield return null;
             }
 
-            // 4. Fade from white/black in the Hub scene
-            // (Hub scene should handle this in its Start method)
+            // 4. Wait one frame for scene to initialize
+            yield return null;
+
+            // 5. Fade from white/black
+            if (FadeTransition.Instance != null)
+            {
+                bool fadeComplete = false;
+                Debug.Log("[MenuManager] Starting fade from white/black...");
+
+                if (_useWhiteFade)
+                {
+                    FadeTransition.Instance.FadeFromWhite(_transitionDuration, () =>
+                    {
+                        Debug.Log("[MenuManager] Fade from white completed");
+                        fadeComplete = true;
+                    });
+                }
+                else
+                {
+                    FadeTransition.Instance.FadeFromBlack(_transitionDuration, () =>
+                    {
+                        Debug.Log("[MenuManager] Fade from black completed");
+                        fadeComplete = true;
+                    });
+                }
+
+                // Wait for fade to complete
+                while (!fadeComplete)
+                {
+                    yield return null;
+                }
+
+                Debug.Log("[MenuManager] Setting fade transparent explicitly");
+                // Explicitly ensure it's transparent
+                FadeTransition.Instance.SetFadeTransparent();
+
+                Debug.Log("[MenuManager] Fade sequence complete");
+            }
+
+            _isTransitioning = false;
         }
     }
 }
