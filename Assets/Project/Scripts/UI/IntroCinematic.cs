@@ -54,22 +54,35 @@ namespace ResidentialHVAC.UI
         /// <summary>
         /// Configure VideoPlayer to not lock VR frame rate
         /// </summary>
-        private void ConfigureVideoPlayerForVR()
+private void ConfigureVideoPlayerForVR()
         {
             if (_videoPlayer != null)
             {
                 // CRITICAL: Skip video frames if needed to maintain VR frame rate
-                // This allows video to drop frames instead of locking VR to 24 FPS
+                // This allows video to drop frames instead of locking VR to 24/30 FPS
                 _videoPlayer.skipOnDrop = true;
 
                 // Wait for first frame to ensure video renders properly
                 _videoPlayer.waitForFirstFrame = true;
-
-                // DON'T override renderMode - keep whatever is set in Inspector
-                // (Could be RenderTexture, CameraFarPlane, etc.)
-
+                
+                // CRITICAL: Ensure playback is not synced to audio if audio is separate
+                // This prevents audio clock from controlling frame rate
+                if (_audioSource != null && _introCinematicClip != null)
+                {
+                    // Video is visual only, audio handled separately
+                    _videoPlayer.audioOutputMode = UnityEngine.Video.VideoAudioOutputMode.None;
+                    Debug.Log("[IntroCinematic] VideoPlayer audio disabled (using AudioSource instead)");
+                }
+                
                 // Ensure playback speed is correct
                 _videoPlayer.playbackSpeed = 1.0f;
+                
+                // CRITICAL: For VR, use RenderTexture or Camera Near/Far Plane, NEVER use Direct
+                // Direct output can cause frame rate issues
+                if (_videoPlayer.renderMode == UnityEngine.Video.VideoRenderMode.APIOnly)
+                {
+                    Debug.LogWarning("[IntroCinematic] VideoPlayer renderMode is APIOnly - consider using RenderTexture or CameraFarPlane for VR");
+                }
 
                 Debug.Log($"[IntroCinematic] VideoPlayer configured for VR (renderMode: {_videoPlayer.renderMode}, skipOnDrop: true)");
             }

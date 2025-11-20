@@ -1,22 +1,21 @@
 // Assets/Project/Scripts/Core/VRFrameRateManager.cs
 using UnityEngine;
-using UnityEngine.XR;
 
 namespace ResidentialHVAC.Core
 {
     /// <summary>
-    /// Ensures VR maintains high frame rate (72-90 FPS) regardless of video playback
+    /// Ensures VR maintains high frame rate (72-90 FPS) using Meta's OVRPlugin
     /// CRITICAL for VR comfort and preventing motion sickness
+    /// FIXED: Now uses Meta's OVRPlugin instead of legacy Unity XR APIs
     /// </summary>
     public class VRFrameRateManager : MonoBehaviour
     {
         [Header("Target Frame Rates")]
-        [SerializeField] private int _vrTargetFrameRate = 90; // Quest 2/3 can do 90
+        [SerializeField] private int _vrTargetFrameRate = 90; // Quest 2/3 can do 90Hz
         [SerializeField] private int _fallbackFrameRate = 72; // Minimum acceptable for VR
 
         [Header("Force Settings")]
         [SerializeField] private bool _disableVSync = true;
-        [SerializeField] private bool _forceConstantReprojection = false;
 
         private static VRFrameRateManager _instance;
 
@@ -38,64 +37,93 @@ namespace ResidentialHVAC.Core
         {
             // Double-check on Start
             EnforceVRFrameRate();
+            LogCurrentDisplayFrequency();
         }
 
         private void InitializeVRFrameRate()
         {
-            Debug.Log("[VRFrameRate] Initializing VR frame rate settings...");
+            Debug.Log("[VRFrameRate] Initializing Meta XR frame rate settings...");
 
-            // CRITICAL: Disable VSync - VR handles its own timing
+            // CRITICAL: Disable VSync - Meta XR handles its own timing
             if (_disableVSync)
             {
                 QualitySettings.vSyncCount = 0;
-                Debug.Log("[VRFrameRate] VSync disabled");
+                Debug.Log("[VRFrameRate] VSync disabled for Meta XR");
             }
 
-            // Set target frame rate
+            // Set target frame rate using Meta SDK
             EnforceVRFrameRate();
-
-            // Try to set XR display refresh rate if available
-            TrySetXRRefreshRate();
         }
 
         private void EnforceVRFrameRate()
         {
-            // For Meta Quest and other VR headsets
-            if (XRSettings.enabled)
+#if UNITY_ANDROID && !UNITY_EDITOR
+            // CRITICAL: Use Meta's OVRPlugin to set display frequency
+            try
             {
-                // VR is active - remove frame rate limit and let headset use native refresh rate
-                // Quest 2/3 will automatically use 72Hz, 90Hz, or 120Hz based on hardware
-                Application.targetFrameRate = -1; // -1 = No limit (use native VR refresh rate)
-                Debug.Log($"[VRFrameRate] VR detected - frame rate limit removed (native VR refresh rate)");
+                // Get available display frequencies from Meta SDK
+                float[] availableFreqs = OVRPlugin.systemDisplayFrequenciesAvailable;
+                
+                if (availableFreqs != null && availableFreqs.Length > 0)
+                {
+                    Debug.Log($"[VRFrameRate] Available Meta XR frequencies: {string.Join(", ", availableFreqs)} Hz");
+                    
+                    // Try to set to target frequency (90Hz preferred, then 72Hz)
+                    float targetFreq = _vrTargetFrameRate;
+                    
+                    // Check if target is available, otherwise use fallback
+                    bool targetAvailable = System.Array.Exists(availableFreqs, freq => Mathf.Approximately(freq, targetFreq));
+                    if (!targetAvailable)
+                    {
+                        targetFreq = _fallbackFrameRate;
+                        bool fallbackAvailable = System.Array.Exists(availableFreqs, freq => Mathf.Approximately(freq, targetFreq));
+                        
+                        if (!fallbackAvailable)
+                        {
+                            // Use highest available frequency
+                            targetFreq = availableFreqs[availableFreqs.Length - 1];
+                        }
+                    }
+                    
+                    // CRITICAL: Set display frequency using OVRPlugin (Meta's proper API)
+                    OVRPlugin.systemDisplayFrequency = targetFreq;
+                    
+                    // Also set Unity's target frame rate to match
+                    Application.targetFrameRate = (int)targetFreq;
+                    
+                    Debug.Log($"[VRFrameRate] ✓ Meta XR display frequency set to {targetFreq} Hz");
+                }
+                else
+                {
+                    Debug.LogWarning("[VRFrameRate] No display frequencies available from OVRPlugin");
+                    Application.targetFrameRate = _vrTargetFrameRate;
+                }
             }
-            else
+            catch (System.Exception e)
             {
-                // Editor or non-VR fallback - use reasonable target
-                Application.targetFrameRate = _fallbackFrameRate;
-                Debug.Log($"[VRFrameRate] Non-VR mode - target frame rate set to {_fallbackFrameRate} FPS");
+                Debug.LogError($"[VRFrameRate] Error setting Meta XR display frequency: {e.Message}");
+                Application.targetFrameRate = _vrTargetFrameRate;
             }
+#else
+            // Editor mode - just set Unity target frame rate
+            Application.targetFrameRate = _fallbackFrameRate;
+            Debug.Log($"[VRFrameRate] Editor mode - target frame rate set to {_fallbackFrameRate} FPS");
+#endif
         }
 
-        private void TrySetXRRefreshRate()
+        private void LogCurrentDisplayFrequency()
         {
-            // Note: XR display refresh rate APIs vary greatly between Unity versions
-            // For Quest devices, the headset will automatically use its native refresh rate (72/90/120Hz)
-            // We just need to ensure Application.targetFrameRate doesn't limit it
-
-            if (XRSettings.enabled)
+#if UNITY_ANDROID && !UNITY_EDITOR
+            try
             {
-                Debug.Log($"[VRFrameRate] XR is active - headset will use native refresh rate");
-
-                // Set target frame rate high enough to not limit VR
-                // Quest will naturally run at its native rate (72/90/120Hz depending on model)
-                Application.targetFrameRate = -1; // Remove frame rate limit for VR
-
-                Debug.Log("[VRFrameRate] Frame rate limit removed - VR will run at native refresh rate");
+                float currentFreq = OVRPlugin.systemDisplayFrequency;
+                Debug.Log($"[VRFrameRate] Current Meta XR display frequency: {currentFreq} Hz");
             }
-            else
+            catch (System.Exception e)
             {
-                Debug.Log("[VRFrameRate] XR not detected - using fallback frame rate");
+                Debug.LogWarning($"[VRFrameRate] Could not query current display frequency: {e.Message}");
             }
+#endif
         }
 
         /// <summary>
@@ -105,13 +133,16 @@ namespace ResidentialHVAC.Core
         {
             if (_instance == null) return;
 
-            Debug.Log("[VRFrameRate] Preparing for video playback - maintaining VR frame rate");
+            Debug.Log("[VRFrameRate] Preparing for video playback - maintaining Meta XR frame rate");
 
-            // Ensure VSync is OFF (video might try to re-enable it)
+            // CRITICAL: Ensure VSync is OFF (video might try to re-enable it)
             QualitySettings.vSyncCount = 0;
 
-            // Re-enforce target frame rate
+            // Re-enforce target frame rate using Meta SDK
             _instance.EnforceVRFrameRate();
+            
+            // Log current frequency for debugging
+            _instance.LogCurrentDisplayFrequency();
         }
 
         /// <summary>
@@ -121,24 +152,33 @@ namespace ResidentialHVAC.Core
         {
             if (_instance == null) return;
 
-            Debug.Log("[VRFrameRate] Video playback complete - VR frame rate maintained");
+            Debug.Log("[VRFrameRate] Restoring after video playback - enforcing Meta XR frame rate");
 
-            // Re-enforce settings (just in case)
+            // CRITICAL: Force re-application of display frequency
+            QualitySettings.vSyncCount = 0;
             _instance.EnforceVRFrameRate();
+            
+            // Log to verify restoration
+            _instance.LogCurrentDisplayFrequency();
         }
 
-        // Monitor frame rate in editor
         private void Update()
         {
 #if UNITY_EDITOR
-            // Log severe frame drops in editor
-            if (Time.frameCount % 300 == 0) // Every ~5 seconds at 60fps
+            // Monitor frame rate in editor
+            if (Time.frameCount % 300 == 0)
             {
                 float fps = 1.0f / Time.smoothDeltaTime;
                 if (fps < 60f)
                 {
                     Debug.LogWarning($"[VRFrameRate] Low FPS detected: {fps:F1} (Target: {Application.targetFrameRate})");
                 }
+            }
+#else
+            // In build: Periodically verify display frequency hasn't changed
+            if (Time.frameCount % 600 == 0) // Every ~10 seconds at 60fps
+            {
+                LogCurrentDisplayFrequency();
             }
 #endif
         }
