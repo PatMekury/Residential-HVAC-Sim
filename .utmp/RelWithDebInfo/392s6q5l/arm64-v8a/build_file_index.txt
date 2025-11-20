@@ -1,0 +1,2 @@
+C:\Users\HCCLI\Documents\HVAC\Unity\Residential-HVAC-Sim\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\CMakeLists.txt
+C:\Users\HCCLI\Documents\HVAC\Unity\Residential-HVAC-Sim\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\GameActivity\CMakeLists.txt

@@ -1,0 +1,10 @@
+# ninja log v5
+0	1073	7853677376681301	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	3da3c972440c124
+17	1138	7853677377387153	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	1989e085a011a7d2
+10	1167	7853677377680844	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	660c004c8cdef195
+39	1267	7853677377664333	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	65952ea481a3553c
+32	1352	7853677379549412	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	64639afad657060f
+5	1398	7853677379969793	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	692a16b1f2a42e95
+45	1485	7853677380878843	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	e1fed5992746f6a3
+22	1664	7853677382645464	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	7b70dc93bbc7d5c9
+1664	1773	7853677383731937	C:/Users/HCCLI/Documents/HVAC/Unity/Residential-HVAC-Sim/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/392s6q5l/obj/arm64-v8a/libgame.so	ec57dd51de594d29
