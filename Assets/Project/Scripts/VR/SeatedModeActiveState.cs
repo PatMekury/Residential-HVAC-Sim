@@ -1,10 +1,8 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using UnityEngine;
-using Oculus.Interaction.ComprehensiveSample;
-using Oculus.Interaction;
 
-namespace ResidentialHVAC.VR
+namespace Oculus.Interaction.ComprehensiveSample
 {
     /// <summary>
     /// Returns true if seated mode is enabled

@@ -102,11 +102,11 @@ namespace ResidentialHVAC.UI
                 _fadeCanvas.planeDistance = _planeDistance;
                 _fadeCanvas.sortingOrder = 9999; // Always on top
 
-                Debug.Log($"[FadeTransition] Canvas attached to camera: {targetCamera.gameObject.name}");
+              
             }
             else
             {
-                Debug.LogWarning("[FadeTransition] No camera found! Falling back to Overlay mode.");
+               
                 _fadeCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
                 _fadeCanvas.sortingOrder = 9999;
             }
@@ -237,7 +237,7 @@ namespace ResidentialHVAC.UI
         {
             if (_fadeImage == null)
             {
-                Debug.LogError("[FadeTransition] Fade image is null!");
+               
                 onComplete?.Invoke();
                 yield break;
             }

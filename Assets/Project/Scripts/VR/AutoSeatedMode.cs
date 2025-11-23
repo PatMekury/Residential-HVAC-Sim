@@ -3,7 +3,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace ResidentialHVAC.VR
+namespace Oculus.Interaction.ComprehensiveSample
 {
     public class AutoSeatedMode : MonoBehaviour
     {

@@ -15,8 +15,6 @@ namespace ResidentialHVAC.UI
     {
         [Header("Cinematic Settings")]
         [SerializeField] private bool _playOnStart = true;
-        [SerializeField] private bool _canSkip = true;
-        [SerializeField] private KeyCode _skipKey = KeyCode.Space;
 
         [Header("Video (Optional)")]
         [SerializeField] private VideoPlayer _videoPlayer;
@@ -90,11 +88,7 @@ private void ConfigureVideoPlayerForVR()
 
         private void Update()
         {
-            // Allow skipping
-            if (_isPlaying && _canSkip && Input.GetKeyDown(_skipKey))
-            {
-                SkipCinematic();
-            }
+           
         }
 
         /// <summary>

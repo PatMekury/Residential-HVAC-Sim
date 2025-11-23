@@ -1,15 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using Oculus.Interaction.Locomotion;
-using Oculus.Interaction;
-using Oculus.Interaction.ComprehensiveSample;
 using System.Collections;
 using UnityEngine;
 
-namespace ResidentialHVAC.VR
+namespace Oculus.Interaction.ComprehensiveSample
 {
     /// <summary>
-    /// Mirrors the OVRRigs position when it locomotes, then offsets it vertically if seated mode is enabled
+    /// Adjusts the tracking space height when seated mode is enabled
     /// </summary>
     public class SeatedMode : MonoBehaviour
     {
@@ -24,6 +22,9 @@ namespace ResidentialHVAC.VR
         [SerializeField]
         private float _seatedEyeHeight = 1.63f;
 
+        private float _playerNaturalHeight;
+        private float _heightOffset = 0f;
+
         private static bool? _isOn;
         public static bool IsOn
         {
@@ -34,12 +35,31 @@ namespace ResidentialHVAC.VR
             }
         }
 
-        private IEnumerator Start()
+private IEnumerator Start()
         {
-            yield return null; //takes 2 frame for the camera to get its position
+            // Wait for VR tracking to initialize properly on device
             yield return null;
+            yield return null;
+            yield return null;
+            
+            // CRITICAL: Reset tracking space to zero BEFORE capturing natural height
+            // This ensures we're measuring from a clean baseline
+            Vector3 trackingSpacePos = _rig.trackingSpace.localPosition;
+            trackingSpacePos.y = 0;
+            _rig.trackingSpace.localPosition = trackingSpacePos;
+            
+            yield return new WaitForEndOfFrame();
+            
+            // Now capture the player's natural standing eye height
+            // Use localPosition.y which is relative to the rig, not world space
+            _playerNaturalHeight = _rig.centerEyeAnchor.localPosition.y;
+            
+            Debug.Log($"[SeatedMode] Player natural height captured: {_playerNaturalHeight}m");
+            Debug.Log($"[SeatedMode] Seated mode is: {(IsOn ? "ON" : "OFF")}");
+            
             _locomotor.WhenLocomotionEventHandled += SyncPosition;
-            SyncPosition();
+            
+            // Apply the initial state
             UpdateCameraRigHeight();
         }
 
@@ -57,34 +77,49 @@ namespace ResidentialHVAC.VR
 
         private void SyncPosition(LocomotionEvent locomotion, Pose _)
         {
+            // When locomotion happens, just reapply the current offset
+            // The rig.transform has already been moved by the locomotor
+            // We just need to maintain the tracking space offset
             if (locomotion.IsTeleport())
             {
-                SyncPosition();
+                // Reapply offset after teleport
+                ApplyOffset();
             }
             else if (locomotion.IsSnapTurn())
             {
-                transform.rotation = _rig.transform.rotation;
+                // Rotation doesn't affect height
             }
         }
 
-        private void SyncPosition()
-        {
-            transform.SetPose(_rig.transform.GetPose());
-            UpdateCameraRigHeight();
-        }
-
-        private void UpdateCameraRigHeight()
+private void UpdateCameraRigHeight()
         {
             if (IsOn)
             {
-                float playerHeight = _rig.centerEyeAnchor.position.y - _rig.transform.position.y;
-                float diff = Mathf.Max(_seatedEyeHeight - playerHeight, 0);
-                _rig.transform.position = transform.position + Vector3.up * diff;
+                // Calculate how much to offset the tracking space
+                // REMOVED Mathf.Max - we need negative offsets to lower the camera!
+                _heightOffset = _seatedEyeHeight - _playerNaturalHeight;
+                Debug.Log($"[SeatedMode] Seated mode ON - offset: {_heightOffset}m (target: {_seatedEyeHeight}m, natural: {_playerNaturalHeight}m)");
             }
             else
             {
-                _rig.transform.SetPose(transform.GetPose());
+                // No offset in standing mode
+                _heightOffset = 0f;
+                Debug.Log($"[SeatedMode] Seated mode OFF - offset reset to 0");
             }
+            
+            ApplyOffset();
+        }
+
+private void ApplyOffset()
+        {
+            // Apply the offset to the tracking space LOCAL position
+            // This raises/lowers the camera without moving the rig.transform
+            Vector3 localPos = _rig.trackingSpace.localPosition;
+            float oldY = localPos.y;
+            localPos.y = _heightOffset;
+            _rig.trackingSpace.localPosition = localPos;
+            
+            Debug.Log($"[SeatedMode] Applied offset - trackingSpace.localPosition.y: {oldY}m -> {_heightOffset}m");
         }
 
         public static void SetSeatedMode(bool value)
@@ -92,7 +127,7 @@ namespace ResidentialHVAC.VR
             _isOn = value;
             Store.SetInt(PLAYERPREFS_KEY, value ? 1 : 0);
 
-            var instances = Object.FindObjectsByType<SeatedMode>(FindObjectsSortMode.None);
+            var instances = FindObjectsOfType<SeatedMode>();
             for (int i = 0; i < instances.Length; i++)
             {
                 instances[i].UpdateCameraRigHeight();

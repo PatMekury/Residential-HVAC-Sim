@@ -3,7 +3,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ResidentialHVAC.VR
+namespace Oculus.Interaction.ComprehensiveSample
 {
     /// <summary>
     /// Toggles ability to enable SeatedMode
