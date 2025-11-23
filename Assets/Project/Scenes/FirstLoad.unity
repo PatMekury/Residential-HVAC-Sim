@@ -151,7 +151,6 @@ MonoBehaviour:
   _vrTargetFrameRate: 90
   _fallbackFrameRate: 72
   _disableVSync: 1
-  _forceConstantReprojection: 0
 --- !u!4 &682349515
 Transform:
   m_ObjectHideFlags: 0

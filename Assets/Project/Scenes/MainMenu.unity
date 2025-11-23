@@ -4123,6 +4123,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2139157648
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2139157650}
+  - component: {fileID: 2139157649}
+  m_Layer: 0
+  m_Name: VRManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2139157649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2139157648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 482f3f5009d064d49a127832c50d88ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _trackingOrigin: 1
+  _usePositionTracking: 1
+  _useIPDInPositionTracking: 1
+  _recenterOnInit: 1
+  _initRecenterDelay: 1
+  _showDebugLogs: 1
+--- !u!4 &2139157650
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2139157648}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.5929953, y: -0.60780555, z: 3.2647333}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &11199703724421480
 Transform:
   m_ObjectHideFlags: 0
@@ -32628,7 +32678,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 2
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 88795983196948179}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -38487,7 +38537,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7852150826079649457}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -1.066}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -47145,7 +47195,7 @@ Transform:
   m_GameObject: {fileID: 7461778823513064009}
   serializedVersion: 2
   m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
-  m_LocalPosition: {x: 0, y: 1.152, z: -0.472}
+  m_LocalPosition: {x: 0.063, y: 1.152, z: -0.515}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -54641,7 +54691,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4531864477829709663}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 3648ac35952faf94a9aa512dbb6c6332, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: aa144b0841d31744c81be5fb4643a38f, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -79614,6 +79664,7 @@ GameObject:
   - component: {fileID: 6086118864762017706}
   - component: {fileID: 2379523674878147263}
   - component: {fileID: 5944020682113089740}
+  - component: {fileID: 7852150826079649458}
   m_Layer: 0
   m_Name: OVRCameraRig
   m_TagString: Untagged
@@ -79621,6 +79672,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &7852150826079649458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7852150826079649457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b757b0c94b4ece4197d5830a8f55bff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _recenterDelay: 0.5
+  _recenterOnSceneLoad: 1
+  _recenterOnStart: 1
+  _showDebugLogs: 1
 --- !u!4 &7856135048261202708
 Transform:
   m_ObjectHideFlags: 0
@@ -89945,3 +90012,4 @@ SceneRoots:
   - {fileID: 2899651741417774984}
   - {fileID: 1399859045}
   - {fileID: 4080778770161630961}
+  - {fileID: 2139157650}
