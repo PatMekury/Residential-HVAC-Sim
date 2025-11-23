@@ -21,6 +21,20 @@ namespace Oculus.Interaction.ComprehensiveSample
         private Transform _averageEyeLevel; //assumed to be a child
         [SerializeField]
         private float _seatedEyeHeight = 1.63f;
+        [SerializeField]
+        private float _seatedEyeHeightEditor = 0.1f;
+        
+        private float SeatedEyeHeight
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return _seatedEyeHeightEditor;
+#else
+                return _seatedEyeHeight;
+#endif
+            }
+        }
 
         private float _playerNaturalHeight;
         private float _heightOffset = 0f;
@@ -50,11 +64,24 @@ private IEnumerator Start()
             
             yield return new WaitForEndOfFrame();
             
-            // Now capture the player's natural standing eye height
-            // Use localPosition.y which is relative to the rig, not world space
-            _playerNaturalHeight = _rig.centerEyeAnchor.localPosition.y;
+            // Capture diagnostic information
+            float centerEyeLocalY = _rig.centerEyeAnchor.localPosition.y;
+            float centerEyeWorldY = _rig.centerEyeAnchor.position.y;
+            float rigWorldY = _rig.transform.position.y;
+            float trackingSpaceLocalY = _rig.trackingSpace.localPosition.y;
             
+            // Now capture the player's natural standing eye height
+            _playerNaturalHeight = centerEyeLocalY;
+            
+            Debug.Log($"[SeatedMode] === INITIALIZATION DIAGNOSTICS ===");
+            Debug.Log($"[SeatedMode] Platform: {Application.platform}");
+            Debug.Log($"[SeatedMode] Is Editor: {Application.isEditor}");
+            Debug.Log($"[SeatedMode] CenterEye Local Y: {centerEyeLocalY}m");
+            Debug.Log($"[SeatedMode] CenterEye World Y: {centerEyeWorldY}m");
+            Debug.Log($"[SeatedMode] Rig World Y: {rigWorldY}m");
+            Debug.Log($"[SeatedMode] TrackingSpace Local Y: {trackingSpaceLocalY}m");
             Debug.Log($"[SeatedMode] Player natural height captured: {_playerNaturalHeight}m");
+            Debug.Log($"[SeatedMode] Target seated height: {SeatedEyeHeight}m (Editor: {_seatedEyeHeightEditor}m, Device: {_seatedEyeHeight}m)");
             Debug.Log($"[SeatedMode] Seated mode is: {(IsOn ? "ON" : "OFF")}");
             
             _locomotor.WhenLocomotionEventHandled += SyncPosition;
@@ -63,10 +90,10 @@ private IEnumerator Start()
             UpdateCameraRigHeight();
         }
 
-        private void Update()
+private void Update()
         {
             var eyePose = PoseUtils.Delta(_rig.transform, _rig.centerEyeAnchor);
-            eyePose.position = eyePose.position.SetY(_seatedEyeHeight);
+            eyePose.position = eyePose.position.SetY(SeatedEyeHeight);
             _averageEyeLevel.SetPose(eyePose, Space.Self);
         }
 
@@ -97,8 +124,8 @@ private void UpdateCameraRigHeight()
             {
                 // Calculate how much to offset the tracking space
                 // REMOVED Mathf.Max - we need negative offsets to lower the camera!
-                _heightOffset = _seatedEyeHeight - _playerNaturalHeight;
-                Debug.Log($"[SeatedMode] Seated mode ON - offset: {_heightOffset}m (target: {_seatedEyeHeight}m, natural: {_playerNaturalHeight}m)");
+                _heightOffset = SeatedEyeHeight - _playerNaturalHeight;
+                Debug.Log($"[SeatedMode] Seated mode ON - offset: {_heightOffset}m (target: {SeatedEyeHeight}m, natural: {_playerNaturalHeight}m)");
             }
             else
             {
